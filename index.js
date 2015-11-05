@@ -2,7 +2,7 @@
 * @Author: caoke
 * @Date:   2015-08-20 15:55:39
 * @Last Modified by:   caoke
-* @Last Modified time: 2015-11-03 14:42:55
+* @Last Modified time: 2015-11-05 23:34:53
 */
 
 'use strict';
@@ -13,27 +13,11 @@ exports.npm = 'npm';
 
 exports.update = function(moduleName, callback, link) {
 
-    // find global installed module
-    runCommand([
-        exports.npm,
-        'list',
-        '--depth=0',
-        '-g',
-        moduleName
-    ], function(err, result) {
-
-        if (err) {
-            var type = 'install';
-            console.log('>> Can not find ' + moduleName + ', try to install.');
-        } else {
-            var type = 'update';
-            console.log('>> Found ' + moduleName + ', try to update.');
-        }
-
-        // execute install/update command
+    // execute install command
+    function runInstall() {
         runCommand([
             exports.npm,
-            err ? 'install' : 'update',
+            'install',
             moduleName,
             '-g'
         ], link ? function(err, result) {
@@ -46,6 +30,46 @@ exports.update = function(moduleName, callback, link) {
             ], callback);
 
         } : callback, true);
+    }
+
+    // find global installed module
+    runCommand([
+        exports.npm,
+        'list',
+        '--depth=0',
+        '-g',
+        moduleName
+    ], function(err, result) {
+
+        if (err) {
+            console.log('>> Can not find ' + moduleName + ', try to install.');
+            runInstall();
+        } else {
+            var localVersion = result.split('@').pop();
+            console.log('>> Found local module ' + moduleName + '@' + localVersion + '.');
+
+            // find remote version
+            runCommand([
+                exports.npm,
+                'view',
+                moduleName,
+                'version'
+            ], function(err, result) {
+                if (err) {
+                    callback(err, result);
+                } else {
+                    console.log('>> Found remote module ' + moduleName + '@' + result + '.');
+
+                    // local version matches remote version
+                    if (result === localVersion) {
+                        console.log('>> Local version is up to date.');
+                        callback(null);
+                    } else {
+                        runInstall();
+                    }
+                }
+            });
+        }
     });
 };
 

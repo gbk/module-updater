@@ -20,3 +20,9 @@ updater.update('your-module', function(err, result) {
 Install or update `module` to the latest version globally.
 
 A callback is called after installing finished, the first argument of callback is error instance.
+
+## History
+
+### 2.0.1
+
+- Use install command to replace update command.
