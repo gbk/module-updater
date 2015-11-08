@@ -1,6 +1,6 @@
 {
   "name": "module-updater",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Update or install a module globally.",
   "main": "index.js",
   "scripts": {
