@@ -23,6 +23,10 @@ A callback is called after installing finished, the first argument of callback i
 
 ## History
 
+### 2.0.2
+
+- Grant permissions to NODE_PATH before install.
+
 ### 2.0.1
 
 - Use install command to replace update command.
