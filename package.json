@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.alibaba-inc.com:nw/module-updater.git"
+    "url": "git@github.com:gbk/module-updater.git"
   },
   "keywords": [
     "module",
