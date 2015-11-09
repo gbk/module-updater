@@ -2,7 +2,7 @@
 * @Author: caoke
 * @Date:   2015-08-20 15:55:39
 * @Last Modified by:   caoke
-* @Last Modified time: 2015-11-08 22:44:51
+* @Last Modified time: 2015-11-09 13:47:29
 */
 
 'use strict';
@@ -92,7 +92,17 @@ exports.update = function(moduleName, callback, link) {
                         // local version matches remote version
                         if (result === localVersion) {
                             console.log('>> Local version is up to date.');
-                            callback(null);
+
+                            if (link) {
+                                // link to local dir after global install finished
+                                runCommand([
+                                    exports.npm,
+                                    'link',
+                                    moduleName
+                                ], callback);
+                            } else {
+                                callback(null);
+                            }
                         } else {
                             runInstall();
                         }
