@@ -2,7 +2,7 @@
 * @Author: caoke
 * @Date:   2015-08-20 15:55:39
 * @Last Modified by:   caoke
-* @Last Modified time: 2015-11-09 13:47:29
+* @Last Modified time: 2015-11-17 13:43:46
 */
 
 'use strict';
@@ -74,7 +74,7 @@ exports.update = function(moduleName, callback, link) {
                 console.log('>> Can not find ' + moduleName + ', try to install.');
                 runInstall();
             } else {
-                var localVersion = result.split('@').pop();
+                var localVersion = result.split('@').pop().split(/\s+/)[0];
                 console.log('>> Found local module ' + moduleName + '@' + localVersion + '.');
 
                 // find remote version

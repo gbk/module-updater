@@ -23,6 +23,10 @@ A callback is called after installing finished, the first argument of callback i
 
 ## History
 
+### 2.0.4
+
+- Fix linked module version not correct issue.
+
 ### 2.0.3
 
 - Link to local after install finished.
