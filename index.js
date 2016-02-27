@@ -2,7 +2,7 @@
 * @Author: caoke
 * @Date:   2015-08-20 15:55:39
 * @Last Modified by:   caoke
-* @Last Modified time: 2015-11-17 13:43:46
+* @Last Modified time: 2016-02-28 00:52:23
 */
 
 'use strict';
@@ -15,29 +15,38 @@ exports.npm = 'npm';
 exports.update = function(moduleName, callback, link) {
 
     if (process.platform !== 'win32') {
-        // try to give $NODE_PATH a write permission
-        if (process.env['NODE_PATH']) {
-            grantPermission(process.env['NODE_PATH'], checkAndInstall);
-        } else { // find real global node_module path
-            runCommand([
-                exports.npm,
-                'get',
-                'prefix'
-            ], function(err, result) {
-                grantPermission(path.join(result, 'lib', 'node_modules'), checkAndInstall);
-            });
-        }
+        // find real global node_module path
+        runCommand([
+            exports.npm,
+            'get',
+            'prefix'
+        ], function(err, result) {
+            grantPermission(path.join(result, 'lib', 'node_modules'), checkAndInstall);
+        });
     } else {
         checkAndInstall();
     }
 
     // grant permission to node path
     function grantPermission(nodePath, cb) {
+        console.log('>> Check node path for write permission.');
         runCommand([
-            'chmod',
-            '777',
+            'stat',
+            '-c',
+            '%A',
             nodePath
-        ], cb, true);
+        ], function(err, result) {
+            if (result == 'drwxrwxrwx') {
+                cb();
+            } else {
+                console.log('>> Grant write permission to node path.');
+                runCommand([
+                    'chmod',
+                    '777',
+                    nodePath
+                ], cb, true);
+            }
+        });
     }
 
     // execute install command
@@ -75,7 +84,7 @@ exports.update = function(moduleName, callback, link) {
                 runInstall();
             } else {
                 var localVersion = result.split('@').pop().split(/\s+/)[0];
-                console.log('>> Found local module ' + moduleName + '@' + localVersion + '.');
+                console.log('>> Found global module ' + moduleName + '@' + localVersion + '.');
 
                 // find remote version
                 runCommand([
@@ -91,7 +100,7 @@ exports.update = function(moduleName, callback, link) {
 
                         // local version matches remote version
                         if (result === localVersion) {
-                            console.log('>> Local version is up to date.');
+                            console.log('>> Global module version is up to date.');
 
                             if (link) {
                                 // link to local dir after global install finished
